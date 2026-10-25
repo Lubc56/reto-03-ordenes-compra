@@ -19,16 +19,29 @@ try {
 
 const env = process.env
 
+const proveedor = env.LLM_PROVIDER?.trim() || "anthropic"
+
+// Modelo por defecto de cada proveedor; LLM_MODEL lo reemplaza
+const MODELO_POR_DEFECTO: Record<string, string> = {
+  anthropic: "claude-opus-5-5",
+  gemini: "gemini-flash-latest", // alias oficial de Google al Flash más reciente
+  simulado: "guion-determinista",
+}
+
 export const config = {
   puerto: entero(env.PORT, 3000),
   claveAcceso: env.ACCESS_KEY?.trim() || null,
   llm: {
-    proveedor: env.LLM_PROVIDER?.trim() || "anthropic",
-    modelo: env.LLM_MODEL?.trim() || "claude-opus-5-5",
+    proveedor,
+    modelo: env.LLM_MODEL?.trim() || MODELO_POR_DEFECTO[proveedor] || "",
     esfuerzo: EsfuerzoSchema.parse(env.LLM_EFFORT ?? "medium"),
     maxTokensRespuesta: entero(env.LLM_MAX_TOKENS, 16000),
     timeoutMs: entero(env.LLM_TIMEOUT_MS, 90_000),
     claveAnthropic: env.ANTHROPIC_API_KEY?.trim() || null,
+    claveGemini: env.GEMINI_API_KEY?.trim() || null,
+    // Proveedor "compatible" (Groq, Ollama…) y URL alternativa para Gemini
+    urlBase: env.LLM_BASE_URL?.trim() || null,
+    claveCompatible: env.LLM_API_KEY?.trim() || null,
   },
   agente: {
     maxIteraciones: entero(env.MAX_ITERACIONES, 25),
