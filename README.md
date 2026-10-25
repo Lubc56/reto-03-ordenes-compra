@@ -2,8 +2,9 @@
 
 Reto técnico 03 (Perxia 2.0 · Periferia IT Group). Un agente de chat que lee el paquete de una solicitud de compra, lo valida contra los maestros (RC1–RC10), construye la OC con trazabilidad, genera la evidencia de aprobación (txt y pdf con sha256) y la crea en un SAP simulado. Las excepciones las devuelve al humano con una acción sugerida.
 
-- **Link de prueba:** _pendiente de despliegue (ver "Desplegar")_
-- **Clave de acceso:** _si se define `ACCESS_KEY`, se indica aquí_
+- **Link de prueba:** https://agente-ordenes-compra-calu.onrender.com (plan gratuito: si estuvo inactivo, la primera carga tarda ~1 minuto)
+- **Proveedor activo en el link:** `simulado` (guion determinista sobre las mismas herramientas). Para usar Claude basta con definir `LLM_PROVIDER=anthropic` y `ANTHROPIC_API_KEY` en Render.
+- **Clave de acceso:** no requerida
 - **Planteamiento de la solución:** [SOLUCION.md](SOLUCION.md)
 
 ## Requisitos
