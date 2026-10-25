@@ -128,7 +128,8 @@ export const validar = definirHerramienta({
       const preparado = await prepararCaso(ctx.directory, caso)
       if (!preparado.ok) return preparado
       const { validacion: v, paquete: real } = preparado.data
-      if (v.apta && v.confirmaciones.length > 0) {
+      const existente = await crearSap(ctx.directory).buscarOrdenPorReferencia(real.solicitud.solicitud_id)
+      if (v.apta && v.confirmaciones.length > 0 && !existente) {
         confirmaciones.registrarPendiente(ctx.sessionId, caso, codigos(v.confirmaciones))
       }
       await guardarJson(path.join(rutaSalidaCaso(ctx.directory, caso), "validacion.json"), v)
@@ -136,6 +137,7 @@ export const validar = definirHerramienta({
       return exito({
         caso,
         solicitud_id: real.solicitud.solicitud_id,
+        oc_existente: existente?.numero_oc ?? null,
         ...v,
         ...(alteraciones.length ? { advertencias: [`Se ignoraron valores alterados: ${alteraciones.join(", ")}`] } : {}),
       })
@@ -210,6 +212,7 @@ async function crearOrden(caso: string, payload: Record<string, unknown> | undef
   // Idempotencia: la misma solicitud nunca genera dos OC
   const existente = await sap.buscarOrdenPorReferencia(paquete.solicitud.solicitud_id)
   if (existente) {
+    confirmaciones.cerrar(ctx.sessionId, caso)
     await registrarControl(dirSalida, filaControl(datos, "existente", existente.numero_oc))
     const fecha = "fecha" in existente && typeof existente.fecha === "string" ? existente.fecha : null
     return exito({ numero_oc: existente.numero_oc, fecha, idempotente: true, mensaje: "La OC ya existía para esta solicitud." })

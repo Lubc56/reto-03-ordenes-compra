@@ -1,6 +1,7 @@
 import type { Config } from "../config"
 import { ErrorLLM, type ProveedorLLM } from "./adapter"
 import { ProveedorAnthropic } from "./anthropic"
+import { ProveedorSimulado } from "./simulado"
 
 /** Sin clave el servidor igual arranca: health lo informa y el chat explica qué falta. */
 class ProveedorNoConfigurado implements ProveedorLLM {
@@ -27,5 +28,6 @@ export function crearProveedor({ llm }: Config): ProveedorLLM {
           "El servidor no tiene ANTHROPIC_API_KEY configurada. Las herramientas funcionan sin modelo: npm run demo.",
         )
   }
+  if (llm.proveedor === "simulado") return new ProveedorSimulado()
   return new ProveedorNoConfigurado(llm.proveedor, llm.modelo, `Proveedor LLM no soportado: ${llm.proveedor}.`)
 }
