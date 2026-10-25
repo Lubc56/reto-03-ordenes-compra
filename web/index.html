@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agente OC · SAP</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="barra">
+    <div>
+      <h1>Agente de Órdenes de Compra</h1>
+      <p id="estado" class="estado">Conectando…</p>
+    </div>
+    <button id="nueva" class="secundario" type="button">Nueva sesión</button>
+  </header>
+
+  <main id="chat" class="chat" aria-live="polite">
+    <section class="bienvenida" id="bienvenida">
+      <p>Pídeme procesar una solicitud. Leo el paquete, lo valido contra los maestros (RC1–RC10), armo la OC y la creo en el SAP simulado. Las excepciones te las pregunto antes.</p>
+      <div class="ejemplos">
+        <button type="button" data-ejemplo="Procesa la solicitud sol-001.">sol-001 · flujo normal</button>
+        <button type="button" data-ejemplo="Procesa la solicitud sol-002.">sol-002 · proveedor</button>
+        <button type="button" data-ejemplo="Procesa la solicitud sol-003.">sol-003 · aprobador</button>
+        <button type="button" data-ejemplo='Procesa la solicitud "sol-004". Muéstrame la OC como quedaría en SAP, qué validaciones pasó y cuáles no, y no la crees hasta que yo lo confirme.'>sol-004 · cotización</button>
+        <button type="button" data-ejemplo="Procesa la solicitud sol-005.">sol-005 · retroactiva</button>
+        <button type="button" data-ejemplo="Procesa la solicitud sol-006.">sol-006 · IVA</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="confirmacion" class="confirmacion" hidden>
+    <div>
+      <strong>⏸️ El agente necesita tu confirmación</strong>
+      <p id="confirmacion-detalle"></p>
+    </div>
+    <div class="acciones">
+      <button id="confirmar" type="button">Confirmar</button>
+      <button id="cancelar" type="button" class="secundario">Cancelar</button>
+    </div>
+  </div>
+
+  <form id="formulario" class="entrada">
+    <textarea id="mensaje" rows="2" placeholder="Ej.: procesa la solicitud sol-004" maxlength="4000" required></textarea>
+    <button id="enviar" type="submit">Enviar</button>
+  </form>
+</body>
+</html>
