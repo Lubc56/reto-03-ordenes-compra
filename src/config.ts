@@ -11,6 +11,12 @@ const entero = (valor: string | undefined, porDefecto: number) => {
 const EsfuerzoSchema = z.enum(["low", "medium", "high", "xhigh", "max"]).catch("medium")
 export type Esfuerzo = z.infer<typeof EsfuerzoSchema>
 
+try {
+  process.loadEnvFile() // .env local opcional; no pisa variables ya definidas
+} catch {
+  // sin .env: se usan las variables del entorno (Render, Docker…)
+}
+
 const env = process.env
 
 export const config = {
