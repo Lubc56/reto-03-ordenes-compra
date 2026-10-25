@@ -67,6 +67,7 @@ Prompt y conocimiento se leen en cada turno: cambiarlos no requiere reiniciar ni
 
 La API devuelve `uso` y `usoSesion` en cada respuesta para medir el costo real. Para bajar costos: `LLM_MODEL=claude-haiku-5-5` (≈ 40 veces más barato), viable porque la dificultad está en las herramientas y no en el modelo.
 
+- **Alternativa sin costo:** `LLM_PROVIDER=gemini` con `GEMINI_API_KEY` (plan gratuito de Google AI Studio, modelo `gemini-flash-latest`). Usa un adaptador compatible con OpenAI (`src/llm/compatible-openai.ts`) que también sirve para Groq u Ollama (`LLM_PROVIDER=compatible`). El mensaje del asistente se reenvía intacto para conservar la `thought_signature` que exige Gemini 3.
 - **Fallback:** se activa `fallbacks: "default"` (beta del API): si el modelo declina por política, el API reintenta en el modelo recomendado sin que el turno falle.
 
 ## 5. Matriz de controles
@@ -175,21 +176,31 @@ A la dirección le diría tres cosas:
 | `oc_leer_excel` (P1) | ❌ No hecho | Opcional. |
 | Front, ciclo, adaptador, API | ✅ Hecho | Probado de punta a punta con el proveedor simulado. |
 | Bonus `modulo/` | ✅ Hecho | Generado desde las mismas fuentes; `npm run modulo -- --check`. |
-| Link público | ⏳ Pendiente | `render.yaml` + `Dockerfile` listos. |
+| Link público | ✅ Hecho | https://agente-ordenes-compra-calu.onrender.com (proveedor simulado). |
 
 **Falta para producción:** adaptador SAP real (§6), lectura de `.xlsx`/PDF/`.eml` reales, autenticación de usuarios y auditoría de quién confirmó (hoy es "analista (sesión X)"), almacenamiento durable (base de datos u object storage) y candado distribuido, rate limiting por IP, pruebas automatizadas (unitarias por regla con los 6 fixtures como casos de oro) y observabilidad (trazas por turno y costo por caso).
 
 ## 11. Uso de IA
 
-> ✍️ _Completar con tu experiencia en primera persona._
+**Asistente utilizado.** Construí la solución con **Claude Code** (aplicación de escritorio, modelo Claude Opus 5.5); no usé otros asistentes. Para el modelo del agente consideré el plan gratuito de Gemini para una demostración en vivo sin costo: quedó integrado como proveedor opcional (`LLM_PROVIDER=gemini`), aunque por ahora el link público usa el proveedor simulado.
 
-- **Claude Code (Claude Opus 5.5)** como asistente de construcción: lectura del PRD y los fixtures, propuesta de arquitectura, generación del código TypeScript, depuración y redacción de la documentación.
-- **Qué revisé o cambié de lo propuesto:**
-  - Se descartó pasar el `payload` del modelo directo a SAP: las herramientas recalculan y comparan (decisión 1).
-  - Se descartó una confirmación solo por prompt: se movió al servidor (decisión 2).
-  - Se descartó Bun (no estaba instalado) en favor de Node + tsx, compatible con Bun.
-  - Bug detectado en la prueba del front: el CSS anulaba el atributo `hidden` del banner de confirmación.
-- Puedo explicar cada archivo: ver la tabla de estructura en el README.
+**Reparto del trabajo.** El reto se resolvió en 2 horas, un tiempo muy corto para un proyecto de este tamaño y con tantas posibilidades. La IA construyó prácticamente todo: arquitectura, código, front, `demo.ts`, despliegue y documentación. Mi papel fue dirigir y validar: entregarle el PRD, pedirle que explicara el plan mientras construía, ir aprendiendo el proyecto en marcha, pedir commits por bloques en GitHub, decidir un despliegue sin costo y probar el resultado. El diseño quedó definido casi por completo por el PRD: la IA siguió la arquitectura, el contrato de herramientas y las normas que este exige.
+
+**Cómo lo validé.**
+- Ejecuté los escenarios del PRD (los 6 casos, la idempotencia y la confirmación) con `demo.ts` y en el chat.
+- Con mi experiencia de QA probé la página publicada buscando escenarios que se le podrían ocurrir a un usuario. Así encontré un bug: al pedir "procesa sol-001321321", el agente procesaba **y creaba** la OC de sol-001, porque la detección del caso tomaba solo 3 dígitos. Se corrigió en un único lugar (`casosEnTexto()`) y se verificó en local y en producción.
+- En las pruebas del navegador apareció otro defecto (el banner de confirmación no se ocultaba por una regla de CSS), también corregido.
+
+**Qué se descartó.** Por el poco tiempo se descartaron sugerencias que podían hacer fallar la entrega:
+- Pagar una clave de un modelo: el link usa el proveedor simulado, que llama a las mismas herramientas.
+- El despliegue con contenedor Docker: se cambió por el runtime nativo de Node de Render porque la imagen no se pudo verificar localmente.
+- La herramienta opcional `oc_leer_excel` (P1).
+
+**Límites que reconozco.** Doy fe de que la solución cumple los casos propuestos en el PRD, pero no puedo garantizar escenarios fuera de él: la cobertura de pruebas no es completa, no hay pruebas automatizadas y puede haber bugs que no alcancé a encontrar. Ninguno de los proveedores reales se ejecutó contra su API por falta de clave. El de Claude compila contra los tipos oficiales del SDK. El de Gemini se probó contra un servidor que imita su API, con sus validaciones de firmas y de esquema.
+
+**Cómo me apropio del código.** Pedí a la IA una tutoría y una guía de estudio del proyecto (arquitectura, recorrido por cada archivo, reglas, decisiones y preguntas de defensa), que estudiaré durante la semana para poder explicar cada parte.
+
+**Qué haría distinto.** La IA fue muy útil. La próxima vez abriría en paralelo sesiones dedicadas a entender el trasfondo y la funcionalidad completa mientras se construye, para preparar escenarios de prueba que en esta ocasión no alcancé a considerar.
 
 ## 12. Riesgos de llevarlo a producción
 

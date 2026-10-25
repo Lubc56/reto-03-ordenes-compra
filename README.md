@@ -4,6 +4,7 @@ Reto técnico 03 (Perxia 2.0 · Periferia IT Group). Un agente de chat que lee e
 
 - **Link de prueba:** https://agente-ordenes-compra-calu.onrender.com (plan gratuito: si estuvo inactivo, la primera carga tarda ~1 minuto)
 - **Proveedor activo en el link:** `simulado` (guion determinista sobre las mismas herramientas). Para usar Claude basta con definir `LLM_PROVIDER=anthropic` y `ANTHROPIC_API_KEY` en Render.
+- **Para IA real gratis en el link:** en Render → Environment: `LLM_PROVIDER=gemini`, `LLM_MODEL=gemini-flash-latest` y `GEMINI_API_KEY` (gratis en aistudio.google.com).
 - **Clave de acceso:** no requerida
 - **Planteamiento de la solución:** [SOLUCION.md](SOLUCION.md)
 
@@ -48,9 +49,11 @@ Ver [.env.example](.env.example).
 
 | Variable | Uso | Por defecto |
 |---|---|---|
-| `LLM_PROVIDER` | `anthropic` o `simulado` | `anthropic` |
+| `LLM_PROVIDER` | `anthropic`, `gemini` (gratis), `compatible` (Groq, Ollama…) o `simulado` | `anthropic` |
+| `GEMINI_API_KEY` | Clave gratuita de Google AI Studio (solo backend) | — |
+| `LLM_BASE_URL` / `LLM_API_KEY` | Endpoint y clave del proveedor `compatible` | — |
 | `ANTHROPIC_API_KEY` | Clave del modelo (solo backend) | — |
-| `LLM_MODEL` / `LLM_EFFORT` | Modelo y esfuerzo de razonamiento | `claude-opus-5-5` / `medium` |
+| `LLM_MODEL` / `LLM_EFFORT` | Modelo y esfuerzo de razonamiento (Claude) | según proveedor (`claude-opus-5-5`, `gemini-flash-latest`) / `medium` |
 | `LLM_TIMEOUT_MS` | Timeout por llamada al proveedor | `90000` |
 | `MAX_ITERACIONES` | Tope herramienta → modelo por turno | `25` |
 | `MAX_TOKENS_SESION` / `MAX_TOKENS_GLOBAL` | Topes de gasto | `400000` / `3000000` |
