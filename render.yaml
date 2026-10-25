@@ -1,20 +1,22 @@
 services:
   - type: web
     name: agente-ordenes-compra
-    runtime: docker
+    runtime: node
     plan: free
+    buildCommand: npm ci
+    startCommand: npm start
     healthCheckPath: /api/health
     envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # simulado = guion determinista sin clave. Para usar Claude: cambia a "anthropic"
+      # y agrega ANTHROPIC_API_KEY en el panel de Render (nunca en el repositorio).
       - key: LLM_PROVIDER
-        value: anthropic
+        value: simulado
       - key: LLM_MODEL
         value: claude-opus-5-5
       - key: LLM_EFFORT
         value: medium
-      - key: ANTHROPIC_API_KEY
-        sync: false # se pega en el panel de Render; nunca en el repositorio
-      - key: ACCESS_KEY
-        sync: false
       - key: MAX_TOKENS_SESION
         value: "400000"
       - key: MAX_TOKENS_GLOBAL

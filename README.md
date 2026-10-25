@@ -86,9 +86,11 @@ out/                          generado en ejecución (no se versiona)
 
 ## Desplegar (Render)
 
-1. En Render: **New → Blueprint** y elige este repositorio (usa `render.yaml` y el `Dockerfile`).
-2. Pega `ANTHROPIC_API_KEY` (y opcionalmente `ACCESS_KEY`) en las variables del servicio.
+1. En Render: **New → Blueprint** y elige este repositorio (usa `render.yaml`: Node 22, `npm ci` y `npm start`).
+2. El blueprint arranca con `LLM_PROVIDER=simulado` (funciona sin clave). Para usar Claude, en las variables del servicio cambia `LLM_PROVIDER` a `anthropic` y agrega `ANTHROPIC_API_KEY` (opcionalmente `ACCESS_KEY`).
 3. Verifica `https://<servicio>.onrender.com/api/health`.
+
+Alternativa con contenedor: el `Dockerfile` sirve para Render (runtime Docker), Fly.io o Railway.
 
 El plan gratuito duerme tras 15 min sin uso; el primer request tarda unos segundos. `out/` es efímero en ese plan, y es suficiente para la demo.
 
