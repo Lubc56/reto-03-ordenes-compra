@@ -1,3 +1,4 @@
+import { casosEnTexto } from "../domain/rutas"
 import type { DefinicionHerramienta, LlamadaHerramienta, MensajeLLM, ProveedorLLM, RespuestaLLM } from "./adapter"
 
 // Proveedor determinista (LLM_PROVIDER=simulado): sigue el flujo del prompt con un guion fijo.
@@ -35,8 +36,8 @@ function turnoActual(mensajes: MensajeLLM[]) {
 
 function casoMencionado(mensajes: MensajeLLM[]): string | null {
   for (const m of [...mensajes].reverse()) {
-    const caso = m.rol === "usuario" ? /sol-\d{3}/i.exec(m.texto)?.[0] : null
-    if (caso) return caso.toLowerCase()
+    const caso = m.rol === "usuario" ? casosEnTexto(m.texto)[0] : undefined
+    if (caso) return caso
   }
   return null
 }

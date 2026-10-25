@@ -1,4 +1,5 @@
 import * as confirmaciones from "../domain/confirmaciones"
+import { casosEnTexto } from "../domain/rutas"
 
 // CA3: el servidor (no el modelo) decide si el mensaje del usuario confirma.
 // Vale el botón "Confirmar" del front o un texto afirmativo inequívoco.
@@ -9,8 +10,8 @@ const AFIRMATIVO = /^\s*(s[ií]\b|confirmo|confirmad[oa]s?|confirmar|adelante|pr
 const NEGATIVO = /^\s*(no\b|cancela|cancelar|rechaz|det[ée]n|espera|todav[ií]a no)/i
 
 function casosMencionados(texto: string): string[] | undefined {
-  const casos = texto.match(/sol-\d{3}/gi)?.map((c) => c.toLowerCase())
-  return casos?.length ? casos : undefined
+  const casos = casosEnTexto(texto)
+  return casos.length ? casos : undefined
 }
 
 /** Devuelve una nota para el modelo si el mensaje resolvió confirmaciones pendientes. */

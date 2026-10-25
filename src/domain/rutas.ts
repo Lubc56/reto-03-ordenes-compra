@@ -15,5 +15,10 @@ export function nombreCasoValido(caso: string): boolean {
   return /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(caso)
 }
 
+/** Casos mencionados en un texto, con el identificador completo: "sol-001321321" no es "sol-001". */
+export function casosEnTexto(texto: string): string[] {
+  return [...texto.matchAll(/\bsol-[A-Za-z0-9_-]+/gi)].map((m) => m[0].toLowerCase())
+}
+
 /** Ruta relativa a la raíz, para mostrar al usuario sin exponer rutas absolutas. */
 export const relativa = (raiz: string, ruta: string) => path.relative(raiz, ruta).split(path.sep).join("/")
